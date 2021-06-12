@@ -20,19 +20,26 @@
 
     docReady(function () {
         var resultContainer = document.getElementById('qr-reader-results');
-        var lastResult, countResults = 0;
+        var lastResult = null;
         function onScanSuccess(qrCodeMessage) {
-            if (qrCodeMessage !== lastResult) {
-                ++countResults;
+            html5QrcodeScanner.clear();
+            console.log(qrCodeMessage);
+            if (lastResult === null) {
                 lastResult = qrCodeMessage;
-                resultContainer.innerHTML
-                    += `<div>[${countResults}] - ${qrCodeMessage}</div>`;
+                resultContainer.innerHTML = `<div>${qrCodeMessage}</div>`;
             }
         }
 
+        function onScanFailure(error) {
+            // handle scan failure, usually better to ignore and keep scanning.
+            // for example:
+            //console.warn(`QR error = ${error}`);
+        }
+
+
         var html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess);
+            "qr-reader", { fps: 10, qrbox: 250, facingMode: "environment"  });
+        html5QrcodeScanner.render(onScanSuccess,onScanFailure);
     });
 </script>
 </head>
